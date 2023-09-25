@@ -1,0 +1,15 @@
+.logout-btn {
+   margin:  0px 5px 3px 250px;
+}
+.btn-primary-logout {
+    box-shadow:none;
+    text-shadow:none;
+    outline:none !important;
+    border: 2px solid #f4476b;
+    color: #f4476b;
+    border-radius: 10px;
+    background-color: #b6f7f7;
+    height: 40px;  
+    width: 10%;
+    padding: 4px;
+  }

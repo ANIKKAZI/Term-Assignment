@@ -1,0 +1,504 @@
+Resources:
+  MyRegApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: An API Gateway with a Lambda Integration
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: reg-api
+
+  MyRegApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyRegApi
+      ParentId: !GetAtt MyRegApi.RootResourceId
+      PathPart: "lambda"
+
+  MyRegApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      RestApiId: !Ref MyRegApi
+      ResourceId: !Ref MyRegApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      OperationName: "lambda"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+      Integration:
+        Type: AWS_PROXY
+        ConnectionType: INTERNET
+        IntegrationHttpMethod: POST
+        #Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:665736138867:function:please-work/invocations"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyRegApiLambdaFunction.Arn}/invocations"
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Credentials: "arn:aws:iam::165888259556:role/LabRole"
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'" # Set the desired value or '*' for any origin
+  RegApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: "application/json"
+      RestApiId: !Ref MyRegApi
+      Schema: {}
+  RegApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref MyRegApiGatewayDeployment
+      Description: Lambda API Stage v0
+      RestApiId: !Ref MyRegApi
+      StageName: "dev"
+  MyRegApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: MyRegApiMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref MyRegApi
+
+  MyRegApiLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: myrandombucket3006
+        S3Key: registration.zip
+      Description: AWS Lambda function for Add api
+      FunctionName: "registration-activity-function"
+      Handler: index.handler
+      MemorySize: 256
+      Role: "arn:aws:iam::165888259556:role/LabRole"
+      Runtime: nodejs14.x
+      Timeout: 60
+
+  MyAddApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: An API Gateway with a Lambda Integration
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: add-api
+
+  MyAddApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyAddApi
+      ParentId: !GetAtt MyAddApi.RootResourceId
+      PathPart: "lambda"
+
+  MyAddApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      RestApiId: !Ref MyAddApi
+      ResourceId: !Ref MyAddApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      OperationName: "lambda"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+      Integration:
+        Type: AWS_PROXY
+        ConnectionType: INTERNET
+        IntegrationHttpMethod: POST
+        #Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:665736138867:function:please-work/invocations"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyAddApiLambdaFunction.Arn}/invocations"
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Credentials: "arn:aws:iam::165888259556:role/LabRole"
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'" # Set the desired value or '*' for any origin
+  AddApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: "application/json"
+      RestApiId: !Ref MyAddApi
+      Schema: {}
+  AddApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref MyAddApiGatewayDeployment
+      Description: Lambda API Stage v0
+      RestApiId: !Ref MyAddApi
+      StageName: "dev"
+  MyAddApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: MyAddApiMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref MyAddApi
+
+  MyAddApiLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: myrandombucket3006
+        S3Key: add.zip
+      Description: AWS Lambda function for Add api
+      FunctionName: "add-activity-function"
+      Handler: index.handler
+      MemorySize: 256
+      Role: "arn:aws:iam::165888259556:role/LabRole"
+      Runtime: nodejs14.x
+      Timeout: 60
+
+  MyLoginApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: An API Gateway with a Lambda Integration
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: login-api
+
+  MyLoginApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyLoginApi
+      ParentId: !GetAtt MyLoginApi.RootResourceId
+      PathPart: "lambda"
+
+  MyLoginApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      RestApiId: !Ref MyLoginApi
+      ResourceId: !Ref MyLoginApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      OperationName: "lambda"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+      Integration:
+        Type: AWS_PROXY
+        ConnectionType: INTERNET
+        IntegrationHttpMethod: POST
+        #Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:665736138867:function:please-work/invocations"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLoginApiLambdaFunction.Arn}/invocations"
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Credentials: "arn:aws:iam::165888259556:role/LabRole"
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'" # Set the desired value or '*' for any origin
+  LoginApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: "application/json"
+      RestApiId: !Ref MyLoginApi
+      Schema: {}
+  LoginApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref MyLoginApiGatewayDeployment
+      Description: Lambda API Stage dev
+      RestApiId: !Ref MyLoginApi
+      StageName: "dev"
+  MyLoginApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: MyLoginApiMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref MyLoginApi
+
+  MyLoginApiLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: myrandombucket3006
+        S3Key: login.zip
+      Description: AWS Lambda function for Add api
+      FunctionName: "login-activity-function"
+      Handler: index.handler
+      MemorySize: 256
+      Role: "arn:aws:iam::165888259556:role/LabRole"
+      Runtime: nodejs14.x
+      Timeout: 60
+
+  MyDisplayApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: An API Gateway with a Lambda Integration
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: display-api
+
+  MyDisplayApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyDisplayApi
+      ParentId: !GetAtt MyDisplayApi.RootResourceId
+      PathPart: "lambda"
+
+  MyDisplayApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      RestApiId: !Ref MyDisplayApi
+      ResourceId: !Ref MyDisplayApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      OperationName: "lambda"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+      Integration:
+        Type: AWS_PROXY
+        ConnectionType: INTERNET
+        IntegrationHttpMethod: POST
+        #Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:665736138867:function:please-work/invocations"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyDisplayApiLambdaFunction.Arn}/invocations"
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Credentials: "arn:aws:iam::165888259556:role/LabRole"
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'" # Set the desired value or '*' for any origin
+  DsiplayApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: "application/json"
+      RestApiId: !Ref MyDisplayApi
+      Schema: {}
+  DsiplayApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref MyDisplayApiGatewayDeployment
+      Description: Lambda API Stage dev
+      RestApiId: !Ref MyDisplayApi
+      StageName: "dev"
+  MyDisplayApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: MyDisplayApiMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref MyDisplayApi
+
+  MyDisplayApiLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: myrandombucket3006
+        S3Key: display.zip
+      Description: AWS Lambda function for Add api
+      FunctionName: "display-activity-function"
+      Handler: index.handler
+      MemorySize: 256
+      Role: "arn:aws:iam::165888259556:role/LabRole"
+      Runtime: nodejs14.x
+      Timeout: 60
+
+  MyDeleteApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: An API Gateway with a Lambda Integration
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: delete-api
+
+  MyDeleteApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MyDeleteApi
+      ParentId: !GetAtt MyDeleteApi.RootResourceId
+      PathPart: "lambda"
+
+  MyDeleteApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      ApiKeyRequired: false
+      RestApiId: !Ref MyDeleteApi
+      ResourceId: !Ref MyDeleteApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      OperationName: "lambda"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+      Integration:
+        Type: AWS_PROXY
+        ConnectionType: INTERNET
+        IntegrationHttpMethod: POST
+        #Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:665736138867:function:please-work/invocations"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyDeleteApiLambdaFunction.Arn}/invocations"
+        PassthroughBehavior: WHEN_NO_MATCH
+        TimeoutInMillis: 29000
+        Credentials: "arn:aws:iam::165888259556:role/LabRole"
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'" # Set the desired value or '*' for any origin
+  DeleteApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties:
+      ContentType: "application/json"
+      RestApiId: !Ref MyDeleteApi
+      Schema: {}
+  DeleteApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref MyDeleteApiGatewayDeployment
+      Description: Lambda API Stage dev
+      RestApiId: !Ref MyDeleteApi
+      StageName: "dev"
+  MyDeleteApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: MyDeleteApiMethod
+    Properties:
+      Description: Lambda API Deployment
+      RestApiId: !Ref MyDeleteApi
+
+  MyDeleteApiLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: myrandombucket3006
+        S3Key: delete.zip
+      Description: AWS Lambda function for Add api
+      FunctionName: "delete-activity-function"
+      Handler: index.handler
+      MemorySize: 256
+      Role: "arn:aws:iam::165888259556:role/LabRole"
+      Runtime: nodejs14.x
+      Timeout: 60
+  
+  DBSecurityGroup:
+    Type: AWS::RDS::DBSecurityGroup
+    Properties:
+      GroupDescription: Allow incoming access to the RDS instance
+      DBSecurityGroupIngress:
+        - CIDRIP: 0.0.0.0/0
+
+  DBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: ToDo
+      Engine: mysql
+      MasterUsername: aniketh
+      MasterUserPassword: Sampurna2023
+      AllocatedStorage: 20
+      DBInstanceClass: db.t2.micro
+      EngineVersion: "5.7"
+      DBSecurityGroups:
+        - !Ref DBSecurityGroup
+      MultiAZ: true
+      DBInstanceIdentifier: MyCustomDBInstanceIdentifier
+  
+  SetMeUpRdsSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: to-do-secret-cfn
+      Description: Secret for RDS MySQL database
+      SecretString:
+        Fn::Join:
+          - ""
+          - - '{"username":"aniketh",'
+            - ' "password":"Sampurna2023",'
+            - ' "host":"to-do.cluster-cebsh4mlmzon.us-east-1.rds.amazonaws.com",'
+            - ' "port":"3306"}'
+
+  SNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: Register
+      TopicName: ToDoTopic
+  
+  TranslatorApplication:
+    Type: "AWS::ElasticBeanstalk::Application"
+    Properties:
+      ApplicationName: "translator"
+      Description: "Translation"
+
+  TranslatorApplicationVersion:
+    Type: "AWS::ElasticBeanstalk::ApplicationVersion"
+    Properties:
+      ApplicationName:
+        Ref: "TranslatorApplication"
+      Description: "version"
+      SourceBundle:
+        S3Bucket: "myrandombucket3006"
+        S3Key: "ToDo.zip"
+
+  TranslatorApplicationConfigurationTemplate:
+    Type: "AWS::ElasticBeanstalk::ConfigurationTemplate"
+    Properties:
+      ApplicationName:
+        Ref: "TranslatorApplication"
+      Description: "My application configuration template"
+      SolutionStackName: "64bit Amazon Linux 2 v3.5.9 running Docker"
+      OptionSettings:
+        - Namespace: "aws:autoscaling:launchconfiguration"
+          OptionName: "InstanceType"
+          Value: "t2.micro"
+        - Namespace: "aws:autoscaling:launchconfiguration"
+          OptionName: "EC2KeyName"
+          Value: "vockey"
+        - Namespace: "aws:autoscaling:launchconfiguration"
+          OptionName: "IamInstanceProfile"
+          Value: "LabInstanceProfile"
+        - Namespace: "aws:elasticbeanstalk:environment"
+          OptionName: "ServiceRole"
+          Value: "arn:aws:iam::165888259556:role/LabRole"
+        - Namespace: "aws:elasticbeanstalk:environment"
+          OptionName: "EnvironmentType"
+          Value: "SingleInstance"
+
+  TranslatorEnvironment:
+    Type: "AWS::ElasticBeanstalk::Environment"
+    Properties:
+      ApplicationName:
+        Ref: "TranslatorApplication"
+      EnvironmentName: "TranslatorEnvironment"
+      TemplateName:
+        Ref: "TranslatorApplicationConfigurationTemplate"
+      VersionLabel:
+        Ref: "TranslatorApplicationVersion"
+
+ 
+Outputs:
+  ApiGatewayEndpoint:
+    Value: !Sub "https://${MyDeleteApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Description: Endpoint URL of the API Gateway
+
+Outputs:
+  ApiGatewayEndpoint:
+    Value: !Sub "https://${MyDisplayApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Description: Endpoint URL of the API Gateway
+
+Outputs:
+  ApiGatewayEndpoint:
+    Value: !Sub "https://${MyLoginApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Description: Endpoint URL of the API Gateway
+      
+Outputs:
+  ApiGatewayEndpoint:
+    Value: !Sub "https://${MyAddApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Description: Endpoint URL of the API Gateway
+
+Outputs:
+  ApiGatewayEndpoint:
+    Value: !Sub "https://${MyRegApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Description: Endpoint URL of the API Gateway
+
